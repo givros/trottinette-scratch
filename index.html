@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="TP de technologie de 4e. Programmer une trottinette électrique dans Scratch.">
+    <title>Reprogrammer la trottinette · Technologie 4e</title>
+  </head>
+  <body>
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">TECHNOLOGIE · 4e · SÉQUENCE 02</p>
+        <h1>Reprogrammer la trottinette</h1>
+      </div>
+      <nav aria-label="Ressources du TP">
+        <button id="open-simulator" type="button" disabled>Ouvrir le simulateur</button>
+        <button id="instructions" type="button">Consignes du TP</button>
+      </nav>
+    </header>
+    <section class="toolbar" aria-label="Commandes de la simulation">
+      <strong id="mode">Projet élève</strong>
+      <div class="controls">
+        <span><kbd>Espace</kbd> Lancer</span>
+        <span><kbd>↑</kbd> Accélérer</span>
+        <span><kbd>↓</kbd> Freiner</span>
+        <span><kbd>L</kbd> Basculer le phare</span>
+      </div>
+      <a id="project-download" href="./projects/trottinette-depart.sb3" download>Télécharger le .sb3</a>
+    </section>
+    <main id="scratch-editor" aria-label="Éditeur Scratch">
+      <p id="loading" role="status">Chargement de l’éditeur Scratch…</p>
+    </main>
+    <dialog id="simulator" aria-labelledby="simulator-title">
+      <header class="simulation-header">
+        <div><h2 id="simulator-title">Piste d’essai · Xiaomi M365</h2>
+          <p>Espace pour lancer · ↑ pour accélérer · ↓ pour freiner · L pour le phare</p></div>
+        <button id="close-simulator" type="button">Retour au code</button>
+      </header>
+      <canvas id="test-track" width="1200" height="560" tabindex="0" aria-label="Simulation de la trottinette contrôlée par le projet Scratch"></canvas>
+      <div class="simulation-controls">
+        <button id="run-project" type="button">Drapeau vert</button>
+        <button id="stop-project" type="button">Arrêter</button>
+        <output id="speed-reading">0 km/h</output>
+        <output id="light-reading">Phare éteint</output>
+        <output id="position-reading">Position x −175</output>
+      </div>
+    </dialog>
+    <dialog id="brief" aria-labelledby="brief-title">
+      <header class="brief-header">
+        <h2 id="brief-title">Programmer la Xiaomi M365</h2>
+        <form method="dialog"><button>Fermer</button></form>
+      </header>
+      <p>Écris tes scripts dans <strong>Scène → Code</strong>. Le simulateur lit les variables Position sur la piste, Vitesse (km/h) et Phare (0/1).</p>
+      <details>
+        <summary>Premier essai de déplacement</summary>
+        <p>Dans Scène → Code, assemble « quand le drapeau vert est cliqué » et deux blocs « avancer de 10 pas » de la catégorie Trottinette. Lance le drapeau vert dans le simulateur et vérifie que la position augmente de 20.</p>
+      </details>
+      <ol>
+        <li><strong>Initialiser.</strong> Au drapeau vert, mets Position sur la piste à −175, et les variables Vitesse et Phare à 0.</li>
+        <li><strong>Démarrer et avancer.</strong> À l’arrêt, Espace donne une vitesse de départ de 5 km/h. Tant que ↑ est maintenue, la vitesse augmente si la trottinette roule déjà, jusqu’à 25 km/h. Utilise le bloc « accélérer de … km/h » pour régler la vitesse et faire avancer la trottinette sur la piste.</li>
+        <li><strong>Freiner.</strong> En maintenant ↓, la vitesse diminue plus vite que lorsqu’on relâche l’accélérateur. Garde la vitesse au minimum à zéro. Si ↑ et ↓ sont pressées ensemble, le frein est prioritaire.</li>
+        <li><strong>Commander le phare.</strong> Un appui sur L l’allume, l’appui suivant l’éteint. Change la variable Phare entre 0 et 1. Maintenir L ne doit faire basculer le phare qu’une fois.</li>
+      </ol>
+      <h3>Essais à réaliser</h3>
+      <p>Ouvre le simulateur, puis clique sur son drapeau vert avant de tester les touches. Vérifie que ↑ seule ne permet pas de partir, que le frein arrête la trottinette et que le phare fonctionne même à l’arrêt.</p>
+      <p>Pour rendre ton travail, utilise <strong>Fichier → Sauvegarder sur votre ordinateur</strong> dans Scratch.</p>
+      <p class="credits">Simulation pédagogique. Photographies de la M365 et textures de la piste tirées de clichés CC0 par Axel.206 et Sprucecopse sur Wikimedia Commons. Éditeur Scratch de la Scratch Foundation.</p>
+    </dialog>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

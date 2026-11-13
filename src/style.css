@@ -1,0 +1,60 @@
+:root {
+  font-family: Arial, sans-serif;
+  color: #000;
+  background: #f5f7fc;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+body { margin: 0; display: flex; flex-direction: column; height: 100vh; min-height: 660px; }
+.masthead { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 22px; background: white; border-bottom: 1px solid #d9deea; }
+.eyebrow { margin: 0 0 4px; font-size: .72rem; font-weight: bold; letter-spacing: .08em; }
+h1 { font-size: 1.6rem; margin: 0; }
+.masthead nav, .controls { display: flex; align-items: center; gap: 14px; }
+.masthead a, .masthead button, .brief-header button { font: inherit; font-weight: bold; font-size: .85rem; color: #000; background: #fff; border: 1px solid #ccd3e2; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; white-space: nowrap; }
+.masthead button { background: #e8efff; border-color: #bccbf6; }
+.toolbar { display: flex; align-items: center; gap: 20px; padding: 8px 22px; font-size: .82rem; }
+.toolbar a { color: #000; margin-left: auto; white-space: nowrap; }
+.controls span { white-space: nowrap; }
+kbd { display: inline-block; min-width: 20px; text-align: center; padding: 2px 4px; border: 1px solid #bcc5d5; border-bottom-width: 2px; border-radius: 4px; background: #fff; font-family: inherit; font-weight: bold; }
+#scratch-editor { position: relative; flex: 1; min-height: 0; }
+#scratch-editor > #loading { padding: 20px 22px; }
+#brief { width: min(720px, calc(100vw - 40px)); max-height: calc(100vh - 60px); border: 1px solid #bdc7de; border-radius: 12px; padding: 24px; color: #000; }
+#brief::backdrop { background: rgb(20 32 60 / .48); }
+.brief-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+#brief h2 { margin: 0; font-size: 1.35rem; }
+#brief p, #brief li { line-height: 1.5; }
+#brief ol { padding-left: 24px; }
+#brief li { padding-left: 3px; margin: 10px 0; }
+#brief h3 { margin-bottom: 0; font-size: 1rem; }
+#brief .credits { border-top: 1px solid #d9deea; padding-top: 10px; font-size: .76rem; }
+
+#simulator {
+  width: min(1240px, calc(100vw - 48px));
+  max-height: calc(100vh - 36px);
+  padding: 20px;
+  border: 1px solid #b8c2d6;
+  border-radius: 12px;
+  color: #000;
+}
+#simulator::backdrop { background: rgb(15 23 42 / .78); }
+.simulation-header, .simulation-controls { display: flex; align-items: center; gap: 14px; }
+.simulation-header { justify-content: space-between; margin-bottom: 14px; }
+.simulation-header h2 { margin: 0; }
+.simulation-header p { margin: 6px 0 0; font-size: .88rem; }
+#test-track { display: block; width: 100%; max-height: calc(100vh - 205px); object-fit: contain; background: #242b24; border-radius: 6px; }
+#test-track:focus-visible { outline: 2px solid #425b9c; outline-offset: 3px; }
+.simulation-controls { margin-top: 15px; }
+#simulator button { font: inherit; font-weight: bold; padding: 8px 14px; border: 1px solid #bcc5d5; border-radius: 5px; background: white; cursor: pointer; }
+#simulator #run-project { background: #e3f1e5; }
+.simulation-controls output { font-size: .88rem; padding: 0 9px; font-variant-numeric: tabular-nums; }
+
+/* The separate simulator replaces Scratch’s stage and sprite controls. */
+#scratch-editor [class*="gui_stage-and-target-wrapper"],
+#scratch-editor [class*="gui_stageAndTargetWrapper"] {
+  display: none;
+}
+#scratch-editor [class*="gui_editor-wrapper"],
+#scratch-editor [class*="gui_editorWrapper"] {
+  flex: 1 1 100%;
+  min-width: 0;
+}
