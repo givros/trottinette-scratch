@@ -1,4 +1,6 @@
-const keys = new Set([' ', 'ArrowUp', 'ArrowDown', 'l']);
+import { isScooterPowered } from './scooter-blocks.js';
+
+const specialKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter']);
 const load = name => {
   const image = new Image();
   image.src = import.meta.env.BASE_URL + 'simulator/' + name;
@@ -16,6 +18,7 @@ export function connectSimulator(vm) {
     { image: load('winter-rear.png'), x: 97, y: 346, radius: 43 },
     { image: load('winter-front.png'), x: 498, y: 345, radius: 39 }
   ];
+  const powerReading = document.querySelector('#power-reading');
   const speedReading = document.querySelector('#speed-reading');
   const lightReading = document.querySelector('#light-reading');
   const positionReading = document.querySelector('#position-reading');
@@ -31,9 +34,10 @@ export function connectSimulator(vm) {
   function draw(now) {
     const stage = vm.runtime.getTargetForStage();
     const rawPosition = Number(stage?.variables.position?.value ?? -175);
-    const x = Number.isFinite(rawPosition) ? Math.max(-250, Math.min(250, rawPosition)) : -175;
+    const x = Number.isFinite(rawPosition) ? rawPosition : -175;
     const speed = stage?.variables.speed?.value ?? 0;
-    const light = Number(stage?.variables.light?.value) === 1;
+    const powered = isScooterPowered(vm);
+    const light = powered && Number(stage?.variables.light?.value) === 1;
     const elapsed = Math.min(now - previousTime, 50);
     previousTime = now;
     if (position === null || Math.abs(x - position) > 240) position = x;
@@ -43,8 +47,24 @@ export function connectSimulator(vm) {
 
     ctx.fillStyle = '#242b24';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    if (track.naturalWidth) ctx.drawImage(track, 0, 0, 1200, 560);
-    const offset = 600 + position * travel - 300 * scale;
+    const screenX = 600 + position * travel;
+    const cameraX = screenX - Math.max(294, Math.min(490, screenX));
+    if (track.naturalWidth) {
+      const width = canvas.width;
+      // Alternating mirrored tiles join at identical edges in both directions.
+      const tile = Math.floor(cameraX / width);
+      const left = tile * width - cameraX;
+      for (let index = 0; index < 2; index++) {
+        const xOffset = left + index * width;
+        const flipped = (tile + index) % 2 !== 0;
+        ctx.save();
+        ctx.translate(xOffset + (flipped ? width : 0), 0);
+        ctx.scale(flipped ? -1 : 1, 1);
+        ctx.drawImage(track, 0, 0, width, canvas.height);
+        ctx.restore();
+      }
+    }
+    const offset = screenX - cameraX - 300 * scale;
     ctx.save();
     ctx.translate(offset, 387 - 401 * scale);
     ctx.scale(scale, scale);
@@ -95,6 +115,8 @@ export function connectSimulator(vm) {
       (seconds % 60).toFixed(1).padStart(4, '0');
     ctx.fillText(elapsedText, 600, 49);
 
+    powerReading.value = powered ? 'Trottinette allumée' : 'Trottinette éteinte';
+    powerReading.classList.toggle('is-powered', powered);
     speedReading.value = speed + ' km/h';
     lightReading.value = light ? 'Phare allumé' : 'Phare éteint';
     positionReading.value = 'Position x ' + Math.round(x);
@@ -107,19 +129,23 @@ export function connectSimulator(vm) {
   }
 
   function forward(event) {
+    if (!panel.open || event.isComposing) return;
     const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-    if (!keys.has(key) || (key === ' ' && event.target !== canvas)) return;
+    if (key.length !== 1 && !specialKeys.has(key)) return;
+    const down = event.type === 'keydown';
+    // Keep native keyboard activation on the simulator buttons.
+    if (down && (key === ' ' || key === 'Enter') && event.target.closest('button')) return;
+    if (down && (event.metaKey || event.ctrlKey || event.altKey)) return;
     event.preventDefault();
     event.stopPropagation();
-    const down = event.type === 'keydown';
-    if (down && held.has(key)) return;
+    if (down && (startedAt === null || held.has(key))) return;
     if (down) held.add(key);
     else held.delete(key);
     vm.postIOData('keyboard', { key, isDown: down });
   }
 
-  panel.addEventListener('keydown', forward);
-  panel.addEventListener('keyup', forward);
+  document.addEventListener('keydown', forward, true);
+  document.addEventListener('keyup', forward, true);
   window.addEventListener('blur', releaseKeys);
   opener.addEventListener('click', () => {
     panel.showModal();
@@ -134,20 +160,39 @@ export function connectSimulator(vm) {
     cancelAnimationFrame(frame);
   });
   document.querySelector('#close-simulator').addEventListener('click', () => panel.close());
-  document.querySelector('#run-project').addEventListener('click', () => {
+  const runButton = document.querySelector('#run-project');
+  const runStatus = document.querySelector('#run-status');
+  function setRunning(running) {
+    runButton.disabled = running;
+    runButton.textContent = running ? 'Simulation en cours' : 'Démarrer';
+    runStatus.textContent = running ? 'Simulation démarrée.' : 'Simulation arrêtée.';
+  }
+
+  runButton.addEventListener('click', () => {
     releaseKeys();
     position = null;
     distance = 0;
     startedAt = performance.now();
     vm.greenFlag();
+    setRunning(true);
     canvas.focus();
   });
-  document.querySelector('#stop-project').addEventListener('click', () => {
+  function stopProject() {
     releaseKeys();
     startedAt = null;
     vm.stopAll();
+    setRunning(false);
     position = null;
     canvas.focus();
+  }
+
+  document.querySelector('#stop-project').addEventListener('click', stopProject);
+  document.querySelector('#reset-project').addEventListener('click', () => {
+    stopProject();
+    const stage = vm.runtime.getTargetForStage();
+    if (stage?.variables.position) stage.variables.position.value = -175;
+    if (stage?.variables.light) stage.variables.light.value = 0;
+    distance = 0;
   });
   opener.disabled = false;
 }

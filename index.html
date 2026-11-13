@@ -33,13 +33,16 @@
     <dialog id="simulator" aria-labelledby="simulator-title">
       <header class="simulation-header">
         <div><h2 id="simulator-title">Piste d’essai · Xiaomi M365</h2>
-          <p>Espace pour lancer · ↑ pour accélérer · ↓ pour freiner · L pour le phare</p></div>
+          <p>Touches du TP à programmer dans Scratch · Espace, ↑, ↓ et L</p></div>
         <button id="close-simulator" type="button">Retour au code</button>
       </header>
       <canvas id="test-track" width="1200" height="560" tabindex="0" aria-label="Simulation de la trottinette contrôlée par le projet Scratch"></canvas>
       <div class="simulation-controls">
-        <button id="run-project" type="button">Drapeau vert</button>
+        <button id="run-project" type="button">Démarrer</button>
+        <span id="run-status" role="status" class="visually-hidden"></span>
         <button id="stop-project" type="button">Arrêter</button>
+        <button id="reset-project" type="button">Réinitialiser</button>
+        <output id="power-reading">Trottinette éteinte</output>
         <output id="speed-reading">0 km/h</output>
         <output id="light-reading">Phare éteint</output>
         <output id="position-reading">Position x −175</output>
@@ -53,16 +56,16 @@
       <p>Écris tes scripts dans <strong>Scène → Code</strong>. Le simulateur lit les variables Position sur la piste, Vitesse (km/h) et Phare (0/1).</p>
       <details>
         <summary>Premier essai de déplacement</summary>
-        <p>Dans Scène → Code, assemble « quand le drapeau vert est cliqué » et deux blocs « avancer de 10 pas » de la catégorie Trottinette. Lance le drapeau vert dans le simulateur et vérifie que la position augmente de 20.</p>
+        <p>Dans Scène → Code, assemble « quand le drapeau vert est cliqué » puis « allumer la trottinette » et « accélérer de 5 km/h » de la catégorie Trottinette. Clique sur « Démarrer » dans le simulateur et observe la trottinette avancer à 5 km/h.</p>
       </details>
       <ol>
         <li><strong>Initialiser.</strong> Au drapeau vert, mets Position sur la piste à −175, et les variables Vitesse et Phare à 0.</li>
-        <li><strong>Démarrer et avancer.</strong> À l’arrêt, Espace donne une vitesse de départ de 5 km/h. Tant que ↑ est maintenue, la vitesse augmente si la trottinette roule déjà, jusqu’à 25 km/h. Utilise le bloc « accélérer de … km/h » pour régler la vitesse et faire avancer la trottinette sur la piste.</li>
+        <li><strong>Démarrer et avancer.</strong> Place « allumer la trottinette » sous le bloc « quand le drapeau vert est cliqué ». Programme ensuite la touche Espace pour donner une vitesse de départ de 5 km/h à l’arrêt. Tant que ↑ est maintenue, la vitesse augmente si la trottinette roule déjà, jusqu’à 25 km/h. Utilise le bloc « accélérer de … km/h » pour régler la vitesse et faire avancer la trottinette sur la piste.</li>
         <li><strong>Freiner.</strong> En maintenant ↓, la vitesse diminue plus vite que lorsqu’on relâche l’accélérateur. Garde la vitesse au minimum à zéro. Si ↑ et ↓ sont pressées ensemble, le frein est prioritaire.</li>
         <li><strong>Commander le phare.</strong> Un appui sur L l’allume, l’appui suivant l’éteint. Change la variable Phare entre 0 et 1. Maintenir L ne doit faire basculer le phare qu’une fois.</li>
       </ol>
       <h3>Essais à réaliser</h3>
-      <p>Ouvre le simulateur, puis clique sur son drapeau vert avant de tester les touches. Vérifie que ↑ seule ne permet pas de partir, que le frein arrête la trottinette et que le phare fonctionne même à l’arrêt.</p>
+      <p>Ouvre le simulateur, puis clique sur « Démarrer » avant de tester les touches. Vérifie que ↑ seule ne permet pas de partir, que le frein arrête la trottinette et que le phare fonctionne même à l’arrêt.</p>
       <p>Pour rendre ton travail, utilise <strong>Fichier → Sauvegarder sur votre ordinateur</strong> dans Scratch.</p>
       <p class="credits">Simulation pédagogique. Photographies de la M365 et textures de la piste tirées de clichés CC0 par Axel.206 et Sprucecopse sur Wikimedia Commons. Éditeur Scratch de la Scratch Foundation.</p>
     </dialog>

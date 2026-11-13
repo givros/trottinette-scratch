@@ -1,4 +1,10 @@
 const extensionId = 'scooter';
+const trackUnitsPerMeter = 28.8;
+const poweredStages = new WeakSet();
+
+export function isScooterPowered(vm) {
+  return poweredStages.has(vm.runtime.getTargetForStage());
+}
 
 export function registerScooterBlocks(vm) {
   const manager = vm.extensionManager;
@@ -17,16 +23,15 @@ export function registerScooterBlocks(vm) {
     lastDriveTick = now;
     const speed = Number(variable('speed')?.value);
     const position = variable('position');
-    if (!position || !(speed > 0)) {
+    if (!isScooterPowered(vm) || !position || !(speed > 0)) {
       stopDriving();
       return;
     }
-    const next = (Number(position.value) || 0) + speed * 3.2 * elapsed;
-    position.value = next > 170 ? -175 + (next - 170) % 345 : next;
+    position.value = (Number(position.value) || 0) + (speed / 3.6) * trackUnitsPerMeter * elapsed;
   };
   const changeSpeed = delta => {
     const speed = variable('speed');
-    if (!speed) return;
+    if (!speed || !isScooterPowered(vm)) return;
     speed.value = Math.max(0, Math.min(25, (Number(speed.value) || 0) + delta));
     if (speed.value === 0) {
       stopDriving();
@@ -35,11 +40,19 @@ export function registerScooterBlocks(vm) {
       driveTimer = setInterval(drive, 25);
     }
   };
-  vm.on('PROJECT_STOP_ALL', stopDriving);
   const setLight = value => {
     const light = variable('light');
     if (light) light.value = value;
   };
+  const powerOff = () => {
+    const stage = vm.runtime.getTargetForStage();
+    poweredStages.delete(stage);
+    stopDriving();
+    const speed = variable('speed');
+    if (speed) speed.value = 0;
+    setLight(0);
+  };
+  vm.runtime.on('PROJECT_STOP_ALL', powerOff);
   const extension = {
     getInfo() {
       return {
@@ -49,14 +62,19 @@ export function registerScooterBlocks(vm) {
         color2: '#4280d7',
         color3: '#3373cc',
         blocks: [
+          { opcode: 'powerOn', blockType: 'command', text: 'allumer la trottinette' },
+          { opcode: 'powerOff', blockType: 'command', text: 'éteindre la trottinette' },
+          { opcode: 'isPowered', blockType: 'Boolean', text: 'trottinette allumée ?' },
           {
             opcode: 'move',
+            hideFromPalette: true,
             blockType: 'command',
             text: 'avancer de [STEPS] pas',
             arguments: { STEPS: { type: 'number', defaultValue: 10 } }
           },
           {
             opcode: 'goTo',
+            hideFromPalette: true,
             blockType: 'command',
             text: 'aller à la position [POSITION]',
             arguments: { POSITION: { type: 'number', defaultValue: -175 } }
@@ -78,13 +96,22 @@ export function registerScooterBlocks(vm) {
         ]
       };
     },
+    powerOn() {
+      const stage = vm.runtime.getTargetForStage();
+      if (stage) poweredStages.add(stage);
+    },
+    powerOff,
+    isPowered() {
+      return isScooterPowered(vm);
+    },
     move({ STEPS }) {
       const current = variable('position');
       if (current) this.goTo({ POSITION: (Number(current.value) || 0) + (Number(STEPS) || 0) });
     },
     goTo({ POSITION }) {
       const current = variable('position');
-      if (current) current.value = Math.max(-250, Math.min(250, Number(POSITION) || 0));
+      const next = Number(POSITION);
+      if (current && Number.isFinite(next)) current.value = next;
     },
     accelerate({ AMOUNT }) {
       changeSpeed(Math.max(0, Number(AMOUNT) || 0));
@@ -93,7 +120,7 @@ export function registerScooterBlocks(vm) {
       changeSpeed(-Math.max(0, Number(AMOUNT) || 0));
     },
     lightOn() {
-      setLight(1);
+      if (isScooterPowered(vm)) setLight(1);
     },
     lightOff() {
       setLight(0);

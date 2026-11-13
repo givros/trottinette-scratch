@@ -45,7 +45,6 @@ kbd { display: inline-block; min-width: 20px; text-align: center; padding: 2px 4
 #test-track:focus-visible { outline: 2px solid #425b9c; outline-offset: 3px; }
 .simulation-controls { margin-top: 15px; }
 #simulator button { font: inherit; font-weight: bold; padding: 8px 14px; border: 1px solid #bcc5d5; border-radius: 5px; background: white; cursor: pointer; }
-#simulator #run-project { background: #e3f1e5; }
 .simulation-controls output { font-size: .88rem; padding: 0 9px; font-variant-numeric: tabular-nums; }
 
 /* The separate simulator replaces Scratch’s stage and sprite controls. */
@@ -57,4 +56,20 @@ kbd { display: inline-block; min-width: 20px; text-align: center; padding: 2px 4
 #scratch-editor [class*="gui_editorWrapper"] {
   flex: 1 1 100%;
   min-width: 0;
+}
+
+#simulator #run-project { background: #18703b; color: white; min-width: 172px; }
+#simulator #run-project:disabled { background: #e3f1e5; color: #174a2d; cursor: default; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+#power-reading {
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #f0f1f4;
+  color: #404654;
+  font-weight: bold;
+}
+#power-reading.is-powered {
+  background: #d9f5e3;
+  color: #14532d;
 }
