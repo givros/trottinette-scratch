@@ -46,6 +46,8 @@ export function registerScooterBlocks(vm) {
         id: extensionId,
         name: 'Trottinette',
         color1: '#4c97ff',
+        color2: '#4280d7',
+        color3: '#3373cc',
         blocks: [
           {
             opcode: 'move',
