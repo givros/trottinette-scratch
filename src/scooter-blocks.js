@@ -1,6 +1,11 @@
 const extensionId = 'scooter';
 const trackUnitsPerMeter = 28.8;
 const poweredStages = new WeakSet();
+const motionStops = new WeakMap();
+
+export function stopScooterMotion(vm) {
+  motionStops.get(vm)?.();
+}
 
 export function isScooterPowered(vm) {
   return poweredStages.has(vm.runtime.getTargetForStage());
@@ -10,18 +15,44 @@ export function registerScooterBlocks(vm) {
   const manager = vm.extensionManager;
   if (manager.isExtensionLoaded(extensionId)) return;
 
+  function hasPowerCondition(util) {
+    const blocks = util?.target?.blocks;
+    let current = blocks?.getBlock(util.thread?.peekStack());
+    while (current?.parent) {
+      const parent = blocks.getBlock(current.parent);
+      if (!parent) return false;
+      const condition = blocks.getBlock(parent.inputs?.CONDITION?.block);
+      const insideTrueBranch = parent.inputs?.SUBSTACK?.block === current.id;
+      if ((parent.opcode === 'control_if' || parent.opcode === 'control_if_else') &&
+          insideTrueBranch && condition?.opcode === 'scooter_isPowered') return true;
+      current = parent;
+    }
+    return false;
+  }
+
   const variable = id => vm.runtime.getTargetForStage()?.variables[id];
   let driveTimer;
   let lastDriveTick;
+  let lastAcceleration = -Infinity;
   const stopDriving = () => {
     clearInterval(driveTimer);
     driveTimer = undefined;
+    lastAcceleration = -Infinity;
+    const speed = variable('speed');
+    if (speed) speed.value = 0;
   };
+  motionStops.set(vm, stopDriving);
   const drive = () => {
     const now = performance.now();
     const elapsed = Math.min((now - lastDriveTick) / 1000, .1);
     lastDriveTick = now;
-    const speed = Number(variable('speed')?.value);
+    const speedVariable = variable('speed');
+    let speed = Number(speedVariable?.value);
+    if (!vm.runtime.ioDevices.keyboard.getKeyIsDown('up arrow') ||
+        now - lastAcceleration > 150) {
+      stopDriving();
+      return;
+    }
     const position = variable('position');
     if (!isScooterPowered(vm) || !position || !(speed > 0)) {
       stopDriving();
@@ -98,13 +129,16 @@ export function registerScooterBlocks(vm) {
     },
     powerOn() {
       const stage = vm.runtime.getTargetForStage();
-      if (stage) poweredStages.add(stage);
+      if (stage && vm.runtime.ioDevices.keyboard.getKeyIsDown('a')) poweredStages.add(stage);
     },
-    powerOff,
+    powerOff(args, util) {
+      if (hasPowerCondition(util) && isScooterPowered(vm)) powerOff();
+    },
     isPowered() {
       return isScooterPowered(vm);
     },
     move({ STEPS }) {
+      if (!isScooterPowered(vm)) return;
       const current = variable('position');
       if (current) this.goTo({ POSITION: (Number(current.value) || 0) + (Number(STEPS) || 0) });
     },
@@ -113,16 +147,25 @@ export function registerScooterBlocks(vm) {
       const next = Number(POSITION);
       if (current && Number.isFinite(next)) current.value = next;
     },
-    accelerate({ AMOUNT }) {
-      changeSpeed(Math.max(0, Number(AMOUNT) || 0));
+    accelerate({ AMOUNT }, util) {
+      if (!hasPowerCondition(util)) return;
+      if (!isScooterPowered(vm) ||
+          !vm.runtime.ioDevices.keyboard.getKeyIsDown('up arrow')) return;
+      const amount = Math.max(0, Number(AMOUNT) || 0);
+      if (amount === 0) return;
+      changeSpeed(amount);
+      lastAcceleration = performance.now();
     },
-    brake({ AMOUNT }) {
+    brake({ AMOUNT }, util) {
+      if (!hasPowerCondition(util)) return;
       changeSpeed(-Math.max(0, Number(AMOUNT) || 0));
     },
-    lightOn() {
+    lightOn(args, util) {
+      if (!hasPowerCondition(util)) return;
       if (isScooterPowered(vm)) setLight(1);
     },
-    lightOff() {
+    lightOff(args, util) {
+      if (!hasPowerCondition(util)) return;
       setLight(0);
     }
   };

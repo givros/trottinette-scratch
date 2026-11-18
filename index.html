@@ -20,7 +20,7 @@
     <section class="toolbar" aria-label="Commandes de la simulation">
       <strong id="mode">Projet élève</strong>
       <div class="controls">
-        <span><kbd>Espace</kbd> Lancer</span>
+        <span><kbd>A</kbd> Allumer</span>
         <span><kbd>↑</kbd> Accélérer</span>
         <span><kbd>↓</kbd> Freiner</span>
         <span><kbd>L</kbd> Basculer le phare</span>
@@ -33,7 +33,7 @@
     <dialog id="simulator" aria-labelledby="simulator-title">
       <header class="simulation-header">
         <div><h2 id="simulator-title">Piste d’essai · Xiaomi M365</h2>
-          <p>Touches du TP à programmer dans Scratch · Espace, ↑, ↓ et L</p></div>
+          <p>Touches à programmer · A pour allumer · maintenir ↑ pour avancer · ↓ pour freiner · L pour le phare</p></div>
         <button id="close-simulator" type="button">Retour au code</button>
       </header>
       <canvas id="test-track" width="1200" height="560" tabindex="0" aria-label="Simulation de la trottinette contrôlée par le projet Scratch"></canvas>
@@ -54,18 +54,14 @@
         <form method="dialog"><button>Fermer</button></form>
       </header>
       <p>Écris tes scripts dans <strong>Scène → Code</strong>. Le simulateur lit les variables Position sur la piste, Vitesse (km/h) et Phare (0/1).</p>
-      <details>
-        <summary>Premier essai de déplacement</summary>
-        <p>Dans Scène → Code, assemble « quand le drapeau vert est cliqué » puis « allumer la trottinette » et « accélérer de 5 km/h » de la catégorie Trottinette. Clique sur « Démarrer » dans le simulateur et observe la trottinette avancer à 5 km/h.</p>
-      </details>
       <ol>
-        <li><strong>Initialiser.</strong> Au drapeau vert, mets Position sur la piste à −175, et les variables Vitesse et Phare à 0.</li>
-        <li><strong>Démarrer et avancer.</strong> Place « allumer la trottinette » sous le bloc « quand le drapeau vert est cliqué ». Programme ensuite la touche Espace pour donner une vitesse de départ de 5 km/h à l’arrêt. Tant que ↑ est maintenue, la vitesse augmente si la trottinette roule déjà, jusqu’à 25 km/h. Utilise le bloc « accélérer de … km/h » pour régler la vitesse et faire avancer la trottinette sur la piste.</li>
-        <li><strong>Freiner.</strong> En maintenant ↓, la vitesse diminue plus vite que lorsqu’on relâche l’accélérateur. Garde la vitesse au minimum à zéro. Si ↑ et ↓ sont pressées ensemble, le frein est prioritaire.</li>
-        <li><strong>Commander le phare.</strong> Un appui sur L l’allume, l’appui suivant l’éteint. Change la variable Phare entre 0 et 1. Maintenir L ne doit faire basculer le phare qu’une fois.</li>
+        <li><strong>Allumer.</strong> Sous « quand la touche a est pressée », place « allumer la trottinette ».</li>
+        <li><strong>Vérifier l’état.</strong> Dans une boucle « répéter indéfiniment », place « si trottinette allumée ? alors ». Place les commandes de conduite et du phare dans cette condition.</li>
+        <li><strong>Avancer.</strong> Dans cette condition, teste « touche flèche haut pressée ? ». Tant que le test est vrai, exécute « accélérer de 1 km/h ». La trottinette s’arrête dès que la flèche est relâchée.</li>
+        <li><strong>Freiner et éclairer.</strong> Programme la flèche bas avec « freiner de … km/h » et la touche L avec les blocs du phare. Donne la priorité au frein lorsque les deux flèches sont pressées.</li>
       </ol>
       <h3>Essais à réaliser</h3>
-      <p>Ouvre le simulateur, puis clique sur « Démarrer » avant de tester les touches. Vérifie que ↑ seule ne permet pas de partir, que le frein arrête la trottinette et que le phare fonctionne même à l’arrêt.</p>
+      <p>Ouvre le simulateur, puis clique sur « Démarrer » avant de tester les touches. Avant A, vérifie que ↑ reste sans effet. Après A, maintiens ↑ puis relâche-la pour vérifier l’arrêt. Teste aussi le frein et le phare.</p>
       <p>Pour rendre ton travail, utilise <strong>Fichier → Sauvegarder sur votre ordinateur</strong> dans Scratch.</p>
       <p class="credits">Simulation pédagogique. Photographies de la M365 et textures de la piste tirées de clichés CC0 par Axel.206 et Sprucecopse sur Wikimedia Commons. Éditeur Scratch de la Scratch Foundation.</p>
     </dialog>

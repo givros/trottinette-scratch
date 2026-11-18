@@ -1,4 +1,4 @@
-import { isScooterPowered } from './scooter-blocks.js';
+import { isScooterPowered, stopScooterMotion } from './scooter-blocks.js';
 
 const specialKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter']);
 const load = name => {
@@ -126,6 +126,7 @@ export function connectSimulator(vm) {
   function releaseKeys() {
     for (const key of held) vm.postIOData('keyboard', { key, isDown: false });
     held.clear();
+    stopScooterMotion(vm);
   }
 
   function forward(event) {
@@ -142,6 +143,10 @@ export function connectSimulator(vm) {
     if (down) held.add(key);
     else held.delete(key);
     vm.postIOData('keyboard', { key, isDown: down });
+    if (!down && key === 'ArrowUp') {
+      stopScooterMotion(vm);
+      position = null;
+    }
   }
 
   document.addEventListener('keydown', forward, true);
