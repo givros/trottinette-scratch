@@ -73,3 +73,14 @@ kbd { display: inline-block; min-width: 20px; text-align: center; padding: 2px 4
   background: #d9f5e3;
   color: #14532d;
 }
+
+.assessment-entry { padding: 30px; background: white; }
+.assessment-entry form { display: flex; gap: 20px; align-items: end; }
+.assessment-entry label { display: grid; gap: 7px; font-weight: bold; }
+.assessment-entry input { font: inherit; padding: 10px; border: 1px solid #abb4c5; border-radius: 4px; }
+.assessment-entry button, .assessment-bar button { padding: 10px 16px; font: inherit; cursor: pointer; }
+.assessment-bar { display: flex; align-items: center; gap: 24px; background: white; padding: 10px 22px; border-bottom: 1px solid #ccd3e2; }
+.assessment-bar output { font-size: 24px; font-weight: bold; font-variant-numeric: tabular-nums; }
+.assessment-bar button { margin-left: auto; }
+.assessment-bar.time-warning output { color: #b42318; }
+#scratch-editor[inert] { opacity: .65; }

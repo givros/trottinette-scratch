@@ -14,7 +14,6 @@
       </div>
       <nav aria-label="Ressources du TP">
         <button id="open-simulator" type="button" disabled>Ouvrir le simulateur</button>
-        <button id="instructions" type="button">Consignes du TP</button>
       </nav>
     </header>
     <section class="toolbar" aria-label="Commandes de la simulation">
@@ -47,23 +46,6 @@
         <output id="light-reading">Phare éteint</output>
         <output id="position-reading">Position x −175</output>
       </div>
-    </dialog>
-    <dialog id="brief" aria-labelledby="brief-title">
-      <header class="brief-header">
-        <h2 id="brief-title">Programmer la Xiaomi M365</h2>
-        <form method="dialog"><button>Fermer</button></form>
-      </header>
-      <p>Écris tes scripts dans <strong>Scène → Code</strong>. Le simulateur lit les variables Position sur la piste, Vitesse (km/h) et Phare (0/1).</p>
-      <ol>
-        <li><strong>Allumer.</strong> Sous « quand la touche a est pressée », place « allumer la trottinette ».</li>
-        <li><strong>Vérifier l’état.</strong> Dans une boucle « répéter indéfiniment », place « si trottinette allumée ? alors ». Place les commandes de conduite et du phare dans cette condition.</li>
-        <li><strong>Avancer.</strong> Dans cette condition, teste « touche flèche haut pressée ? ». Tant que le test est vrai, exécute « accélérer de 1 km/h ». La trottinette s’arrête dès que la flèche est relâchée.</li>
-        <li><strong>Freiner et éclairer.</strong> Programme la flèche bas avec « freiner de … km/h » et la touche L avec les blocs du phare. Donne la priorité au frein lorsque les deux flèches sont pressées.</li>
-      </ol>
-      <h3>Essais à réaliser</h3>
-      <p>Ouvre le simulateur, puis clique sur « Démarrer » avant de tester les touches. Avant A, vérifie que ↑ reste sans effet. Après A, maintiens ↑ puis relâche-la pour vérifier l’arrêt. Teste aussi le frein et le phare.</p>
-      <p>Pour rendre ton travail, utilise <strong>Fichier → Sauvegarder sur votre ordinateur</strong> dans Scratch.</p>
-      <p class="credits">Simulation pédagogique. Photographies de la M365 et textures de la piste tirées de clichés CC0 par Axel.206 et Sprucecopse sur Wikimedia Commons. Éditeur Scratch de la Scratch Foundation.</p>
     </dialog>
     <script type="module" src="/src/main.js"></script>
   </body>

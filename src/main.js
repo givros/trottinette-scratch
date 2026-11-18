@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import * as ReactRedux from 'react-redux';
 import * as Redux from 'redux';
 import './style.css';
+import { prepareAssessment, connectAssessment } from './assessment.js';
 import { connectSimulator } from './simulator.js';
 import { registerScooterBlocks } from './scooter-blocks.js';
 
@@ -16,12 +17,12 @@ if (params.has('mode')) {
   params.delete('mode');
   history.replaceState(history.state, '', '?' + params);
 }
+const assessment = params.get('evaluation') === '1';
+const assessmentSession = assessment ? await prepareAssessment() : null;
 const filename = 'trottinette-depart.sb3';
 const projectName = 'Trottinette M365 - Projet élève';
 const editor = document.querySelector('#scratch-editor');
-document.querySelector('#instructions').addEventListener('click', () => {
-  document.querySelector('#brief').showModal();
-});
+
 
 Object.assign(globalThis, {
   react: React,
@@ -43,6 +44,7 @@ distribution.onload = () => {
     onVmInit: vm => {
       registerScooterBlocks(vm);
       connectSimulator(vm);
+      if (assessmentSession) connectAssessment(vm, assessmentSession);
     },
     canEditTitle: true,
     canSave: false,
